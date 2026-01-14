@@ -1,23 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-type DocumentType = 'terms' | 'privacy' | 'security' | 'gdpr' | 'cookies';
-type Language = 'en' | 'ru';
+type Language = 'en' | 'ru' | 'pl';
+type Currency = 'USD' | 'RUB' | 'PLN' | 'EUR';
 
 interface Document {
-  id: DocumentType;
-  title: { en: string; ru: string };
+  id: 'terms' | 'privacy' | 'security' | 'gdpr' | 'cookies';
+  title: { en: string; ru: string; pl: string };
   lastUpdated: string;
 }
 
 const documents: Document[] = [
-  { id: 'terms', title: { en: 'Terms of Service', ru: 'Условия обслуживания' }, lastUpdated: '2026-01-14' },
-  { id: 'privacy', title: { en: 'Privacy Policy', ru: 'Политика конфиденциальности' }, lastUpdated: '2026-01-14' },
-  { id: 'security', title: { en: 'Security Statement', ru: 'Заявление о безопасности' }, lastUpdated: '2026-01-14' },
-  { id: 'gdpr', title: { en: 'GDPR & Data Rights', ru: 'GDPR и права данных' }, lastUpdated: '2026-01-14' },
-  { id: 'cookies', title: { en: 'Cookie Policy', ru: 'Политика использования cookies' }, lastUpdated: '2026-01-14' },
+  { id: 'terms', title: { en: 'Terms of Service', ru: 'Условия обслуживания', pl: 'Warunki usługi' }, lastUpdated: '2026-01-14' },
+  { id: 'privacy', title: { en: 'Privacy Policy', ru: 'Политика конфиденциальности', pl: 'Polityka prywatności' }, lastUpdated: '2026-01-14' },
+  { id: 'security', title: { en: 'Security Statement', ru: 'Заявление о безопасности', pl: 'Oświadczenie o bezpieczeństwie' }, lastUpdated: '2026-01-14' },
+  { id: 'gdpr', title: { en: 'GDPR & Data Rights', ru: 'GDPR и права данных', pl: 'RODO i prawa do danych' }, lastUpdated: '2026-01-14' },
+  { id: 'cookies', title: { en: 'Cookie Policy', ru: 'Политика использования cookies', pl: 'Polityka plików cookie' }, lastUpdated: '2026-01-14' },
 ];
 
-const content: Record<DocumentType, Record<Language, string>> = {
+const getDeviceLanguage = (): Language => {
+  const lang = navigator.language.split('-')[0].toLowerCase();
+  if (lang === 'pl') return 'pl';
+  if (lang === 'ru') return 'ru';
+  return 'en';
+};
+
+const getDeviceCurrency = (language: Language): Currency => {
+  switch (language) {
+    case 'pl':
+      return 'PLN'; // Złoty polski
+    case 'ru':
+      return 'RUB'; // Рубль российский
+    case 'en':
+    default:
+      return 'USD'; // Доллар США
+  }
+};
+
+const content: Record<'terms' | 'privacy' | 'security' | 'gdpr' | 'cookies', Record<Language, string>> = {
   terms: {
     en: `# Terms of Service
 
@@ -53,7 +72,7 @@ Max liability: $100 USD`,
     ru: `# Условия обслуживания
 
 ## 1. Принятие условий
-Получая доступ и используя Pay Family, вы принимаете и соглашаетесь соблюдать условия данного соглашения.
+Получая доступ и используя Pay Family, вы принимаете и согласиетесь соблюдать условия данного соглашения.
 
 ## 2. Лицензия использования
 Разрешается временно загружать одну копию материалов (информации или программного обеспечения) Pay Family только для личного, некоммерческого просмотра.
@@ -62,7 +81,7 @@ Max liability: $100 USD`,
 Материалы на Pay Family предоставляются в состоянии "как есть". Pay Family не дает никаких гарантий, явных или подразумеваемых.
 
 ## 4. Ограничение ответственности
-Pay Family не несет ответственности за убытки, возникшие из использования материалов, включая потерю данных или прибыли.
+Pay Family не несет ответственность за убытки, возникшие из использования материалов.
 
 ## 5. Точность материалов
 Материалы на Pay Family могут содержать технические ошибки. Pay Family не гарантирует полноту или актуальность информации.
@@ -81,6 +100,37 @@ MIT License - Исходный код открыт и свободен в исп
 
 ## 10. Ограничение ответственности
 Максимальная ответственность: $100 USD`,
+    pl: `# Warunki usługi
+
+## 1. Zaakceptowanie warunków
+Przez dostęp i korzystanie z Pay Family akceptujesz i zgadzasz się na postanowienia niniejszej umowy.
+
+## 2. Licencja użytkowania
+Dozwolone jest tymczasowe pobranie jednej kopii materiałów (informacji lub oprogramowania) Pay Family wyłącznie do osobistego, niekomercyjnego przeglądania.
+
+## 3. Zrzeczenie się odpowiedzialności
+Materiały na Pay Family są dostarczane "w stanie, w jakim się znajdują". Pay Family nie udzieli żadnych gwarancji, wyrażonych lub dorozumianych.
+
+## 4. Ograniczenie odpowiedzialności
+Pay Family nie ponosi odpowiedzialności za straty wynikające z korzystania z materiałów.
+
+## 5. Dokładność materiałów
+Materiały na Pay Family mogą zawierać błędy techniczne. Pay Family nie gwarantuje kompletności ani aktualności informacji.
+
+## 6. Linki
+Pay Family nie odpowiada za zawartość stron, na które prowadzą linki.
+
+## 7. Zmiany
+Pay Family może zmieniać te warunki bez uprzedzenia.
+
+## 8. Prawo właściwe
+Warunki podlegają prawom Unii Europejskiej.
+
+## 9. Licencja
+MIT License - Kod źródłowy jest otwarty i wolny do użytku.
+
+## 10. Ograniczenie odpowiedzialności
+Maksymalna odpowiedzialność: 100 USD`,
   },
   privacy: {
     en: `# Privacy Policy
@@ -161,6 +211,45 @@ privacy@payfamily.com`,
 
 ## Контакт
 privacy@payfamily.com`,
+    pl: `# Polityka prywatności
+
+## Architektura zerowej wiedzy
+Nie widzimy twoich danych finansowych. Całe szyfrowanie odbywa się po stronie klienta przy użyciu AES-256-GCM. Tylko ty posiadasz klucze deszyfrujące.
+
+## Co zbieramy
+- Adres email
+- Czas zalogowania
+- Informacje o urządzeniu (dla bezpieczeństwa)
+
+## Czego nie zbieramy
+- Transakcji finansowych (zaszyfrowane po stronie klienta)
+- Informacji bankowych
+- Szczegółów płatności
+- Dokumentów tożsamości
+
+## Prawa do danych (RODO)
+1. Prawo dostępu - Poproś kopię swoich danych
+2. Prawo do sprostowania - Skoryguj nieprawidłowe dane
+3. Prawo do usunięcia - Usuń swoje dane
+4. Prawo do ograniczenia - Ogranicz używanie danych
+5. Prawo do przenoszalności - Eksportuj swoje dane
+
+## Zgodność z LGPD (Brazylia)
+Twoje dane są przetwarzane za twoją wyraźną zgodą i mogą być usunięte na żądanie.
+
+## Zgodność z PIPEDA (Kanada)
+Zbieramy dane osobowe tylko w określonych celach i chronimy je środkami bezpieczeństwa.
+
+## Zgodność z CCPA (Kalifornia)
+Masz prawo wiedzieć, usunąć i zrezygnować ze sprzedaży danych.
+
+## Przetwarzanie danych
+- Lokalizacja: Centra danych UE (zgodne z RODO)
+- Przechowywanie: Dopóki konto jest aktywne, następnie 30 dni, następnie usunięcie
+- Strony trzecie: Tylko niezbędne usługi (Stripe do płatności)
+
+## Kontakt
+privacy@payfamily.com`,
   },
   security: {
     en: `# Security Statement
@@ -188,11 +277,7 @@ privacy@payfamily.com`,
 
 ## Vulnerability Reporting
 If you find a security vulnerability, DO NOT post it publicly.
-
-Email: security@payfamily.com with:
-1. Description of vulnerability
-2. Steps to reproduce
-3. Potential impact
+Email: security@payfamily.com
 
 ## Bug Bounty Program
 - Critical: $1000
@@ -200,21 +285,10 @@ Email: security@payfamily.com with:
 - Medium: $250
 - Low: $100
 
-## Incident Response
-1. Detection (automated alerts)
-2. Isolation (affected systems taken offline)
-3. Investigation (forensic analysis)
-4. Notification (within 72 hours)
-5. Remediation (fix and deploy)
-
 ## Compliance
 - SOC 2 Type II compliant
 - GDPR security requirements met
 - OWASP Top 10 protections
-- CWE Top 25 vulnerabilities addressed
-
-## Updates
-Security patches released within 48 hours of discovery.
 
 ## Contact
 security@payfamily.com`,
@@ -243,11 +317,7 @@ security@payfamily.com`,
 
 ## Отчетность об уязвимостях
 Если вы обнаружили уязвимость, НЕ публикуйте ее.
-
-Email: security@payfamily.com с:
-1. Описанием уязвимости
-2. Шагами воспроизведения
-3. Потенциальным воздействием
+Email: security@payfamily.com
 
 ## Программа поиска ошибок
 - Критическая: $1000
@@ -255,23 +325,52 @@ Email: security@payfamily.com с:
 - Средняя: $250
 - Низкая: $100
 
-## Реагирование на инциденты
-1. Обнаружение (автоматические оповещения)
-2. Изоляция (затронутые системы отключены)
-3. Расследование (судебный анализ)
-4. Уведомление (в течение 72 часов)
-5. Устранение (исправление и развертывание)
-
 ## Соответствие
 - SOC 2 Type II compliant
 - Требования безопасности GDPR выполнены
-- Защита OWASP Top 10
-- Уязвимости CWE Top 25 устранены
-
-## Обновления
-Патчи безопасности выпускаются в течение 48 часов после обнаружения.
+- Защиты OWASP Top 10
 
 ## Контакт
+security@payfamily.com`,
+    pl: `# Oświadczenie o bezpieczeństwie
+
+## Szyfrowanie
+- Po stronie klienta: AES-256-GCM
+- Podczas przesyłania: TLS 1.3+
+- Derywacja klucza: PBKDF2-SHA256
+
+## Uwierzytelnianie
+- Tokeny JWT z wygaśnięciem
+- Hashing hasła bcrypt (salt 10)
+- Opcjonalnie: Uwierzytelnianie wieloskładnikowe (MFA)
+
+## Infrastruktura
+- Serwer: Vercel (SOC 2 Type II)
+- Baza danych: PostgreSQL (szyfrowanie w spoczynku)
+- CDN: Cloudflare (ochrona DDoS)
+
+## Nagłówki bezpieczeństwa
+- X-Frame-Options: DENY
+- X-Content-Type-Options: nosniff
+- Content-Security-Policy: strict
+- X-XSS-Protection: 1; mode=block
+
+## Zgłaszanie luk w bezpieczeństwie
+Jeśli odkryjesz lukę w bezpieczeństwie, NIE publikuj jej publicznie.
+Email: security@payfamily.com
+
+## Program wyszukiwania błędów
+- Krytyczne: $1000
+- Wysokie: $500
+- Średnie: $250
+- Niskie: $100
+
+## Zgodność
+- SOC 2 Type II compliant
+- Wymogi bezpieczeństwa RODO spełnione
+- Ochrona OWASP Top 10
+
+## Kontakt
 security@payfamily.com`,
   },
   gdpr: {
@@ -282,56 +381,27 @@ security@payfamily.com`,
 ### 1. Right to Access
 Request a copy of all personal data we hold about you.
 
-**How:**
-Email: dsr@payfamily.com
-Include: Your account email, date range (optional)
-Response time: 30 days
-
 ### 2. Right to Rectification
 Correct any inaccurate or incomplete data.
 
-**How:**
-Log in → Settings → Update your information
-Or email: privacy@payfamily.com
-
-### 3. Right to Erasure ("Right to be Forgotten")
-Request deletion of your personal data.
-
-**How:**
-Email: dsr@payfamily.com with "Deletion Request"
-We will delete:
-- Account data
-- Transaction history
-- Personal information
-- Within 30 days
-
-**Note:** This is permanent and cannot be undone.
+### 3. Right to Erasure
+Request deletion of your personal data (permanent).
 
 ### 4. Right to Restrict Processing
-Limit how we use your data (while we investigate).
-
-**How:**
-Email: privacy@payfamily.com with specific restriction
+Limit how we use your data.
 
 ### 5. Right to Data Portability
 Export your data in machine-readable format (JSON, CSV).
 
-**How:**
-Settings → Export Data
-Or email: dsr@payfamily.com with "Data Export Request"
-Response: Within 7 days
-
 ## GDPR Compliance
 - Data Protection Officer (DPO): dpo@payfamily.com
-- Data Processing Agreement: Available on request
-- Legal basis: Contractual necessity + legitimate interest
+- Response SLA: 30 days maximum
 - Data retention: 30 days after account deletion
 
 ## How to Submit Requests
-1. Email: dsr@payfamily.com (Data Subject Requests)
-2. Subject: Specify which right (Access, Rectification, Erasure, etc.)
-3. Include: Your account email + any relevant details
-4. SLA: 30 days maximum
+Email: dsr@payfamily.com
+Subject: Specify which right (Access, Rectification, Erasure, etc.)
+Include: Your account email + relevant details
 
 ## Contact
 dsr@payfamily.com - For all GDPR requests`,
@@ -340,61 +410,63 @@ dsr@payfamily.com - For all GDPR requests`,
 ## Ваши 5 основных прав
 
 ### 1. Право на доступ
-Запросите копию всех ваших персональных данных.
-
-**Как:**
-Email: dsr@payfamily.com
-Включите: Email вашей учетной записи, период (опционально)
-Время ответа: 30 дней
+Запросите копию всех ваших личных данных.
 
 ### 2. Право на исправление
 Исправьте неверные или неполные данные.
 
-**Как:**
-Войдите → Параметры → Обновите информацию
-Или email: privacy@payfamily.com
-
-### 3. Право на удаление ("Право быть забытым")
-Запросите удаление ваших персональных данных.
-
-**Как:**
-Email: dsr@payfamily.com с "Запрос на удаление"
-Мы удалим:
-- Данные учетной записи
-- Историю транзакций
-- Личную информацию
-- В течение 30 дней
-
-**Внимание:** Это необратимо.
+### 3. Право на удаление
+Запросите удаление ваших личных данных (постоянное).
 
 ### 4. Право на ограничение обработки
 Ограничьте использование ваших данных.
 
-**Как:**
-Email: privacy@payfamily.com с конкретным ограничением
-
 ### 5. Право на портативность данных
 Экспортируйте ваши данные в машиночитаемом формате (JSON, CSV).
 
-**Как:**
-Параметры → Экспортировать данные
-Или email: dsr@payfamily.com с "Запрос на экспорт данных"
-Ответ: В течение 7 дней
-
 ## Соответствие GDPR
-- Специалист по защите данных: dpo@payfamily.com
-- Соглашение об обработке данных: Доступно по запросу
-- Правовое основание: Договорная необходимость + законный интерес
+- Специалист по защите данных (DPO): dpo@payfamily.com
+- SLA ответа: максимум 30 дней
 - Хранение данных: 30 дней после удаления учетной записи
 
-## Как отправить запросы
-1. Email: dsr@payfamily.com (Запросы субъектов данных)
-2. Тема: Укажите право (Доступ, Исправление, Удаление и т.д.)
-3. Включите: Email вашей учетной записи + релевантные детали
-4. SLA: Максимум 30 дней
+## Как подать запрос
+Email: dsr@payfamily.com
+Тема: Укажите, какое право (Доступ, Исправление, Удаление и т.д.)
+Включите: Email вашей учетной записи + релевантные детали
 
 ## Контакт
 dsr@payfamily.com - Для всех запросов GDPR`,
+    pl: `# RODO i prawa do danych
+
+## Twoje 5 głównych praw
+
+### 1. Prawo dostępu
+Poproś kopię wszystkich swoich danych osobowych.
+
+### 2. Prawo do sprostowania
+Skoryguj nieprawidłowe lub niekompletne dane.
+
+### 3. Prawo do usunięcia
+Poproś o usunięcie swoich danych osobowych (permanentne).
+
+### 4. Prawo do ograniczenia przetwarzania
+Ogranicz sposób korzystania z Twoich danych.
+
+### 5. Prawo do przenoszalności danych
+Eksportuj swoje dane w formacie czytelnym dla maszyn (JSON, CSV).
+
+## Zgodność z RODO
+- Inspektor Ochrony Danych (IOD): dpo@payfamily.com
+- SLA odpowiedzi: maksymalnie 30 dni
+- Przechowywanie danych: 30 dni po usunięciu konta
+
+## Jak złożyć wniosek
+Email: dsr@payfamily.com
+Temat: Określ, które prawo (Dostęp, Sprostowanie, Usunięcie itp.)
+Załącz: Email Twojego konta + istotne szczegóły
+
+## Kontakt
+dsr@payfamily.com - Dla wszystkich wniosków RODO`,
   },
   cookies: {
     en: `# Cookie Policy
@@ -408,24 +480,16 @@ Cookies are small files stored on your device that help us remember you and impr
 - **Purpose:** Keep you logged in, process payments
 - **Duration:** Session or 24 hours
 - **Can disable:** No (site won't work)
-- **Examples:** auth_token, session_id
 
 ### Analytics Cookies
 - **Purpose:** Understand how you use Pay Family
 - **Duration:** 1 year
 - **Can disable:** Yes
-- **Tool:** Google Analytics
 
 ### Preference Cookies
-- **Purpose:** Remember your language, theme preference
+- **Purpose:** Remember your language, theme preference, currency
 - **Duration:** 1 year
 - **Can disable:** Yes
-- **Examples:** language=ru, theme=dark
-
-## Third-Party Cookies
-- Stripe (payments)
-- Cloudflare (security)
-- Google Analytics (if enabled)
 
 ## How to Manage Cookies
 
@@ -433,28 +497,10 @@ Cookies are small files stored on your device that help us remember you and impr
 1. Open Settings
 2. Find Cookies/Privacy section
 3. Block or allow cookies
-4. Clear cookies anytime
 
 ### In Pay Family
 - Settings → Privacy → Cookie Preferences
 - Toggle analytics cookies on/off
-- Cookie banner on first visit
-
-## Cookie Consent
-Your consent is stored in: `payment_cookie_consent` cookie
-- You can change consent anytime in Settings
-- Essential cookies always enabled
-- Analytics/Preferences can be disabled
-
-## Data Shared via Cookies
-- Encrypted session tokens (not readable by third parties)
-- Anonymized analytics (no financial data)
-- No personally identifiable information in cookies
-
-## Duration
-- Essential: Session + 24 hours
-- Analytics: 1 year
-- Preferences: 1 year
 
 ## Questions?
 Email: privacy@payfamily.com`,
@@ -469,24 +515,16 @@ Cookies - это небольшие файлы, хранящиеся на ваш
 - **Назначение:** Держать вас в сессии, обработка платежей
 - **Длительность:** Сессия или 24 часа
 - **Можно отключить:** Нет (сайт не будет работать)
-- **Примеры:** auth_token, session_id
 
 ### Аналитические Cookies
 - **Назначение:** Понять, как вы используете Pay Family
 - **Длительность:** 1 год
 - **Можно отключить:** Да
-- **Инструмент:** Google Analytics
 
 ### Cookies Предпочтений
-- **Назначение:** Запомнить ваш язык, тему
+- **Назначение:** Запомнить ваш язык, тему, валюту
 - **Длительность:** 1 год
 - **Можно отключить:** Да
-- **Примеры:** language=ru, theme=dark
-
-## Cookies третьих сторон
-- Stripe (платежи)
-- Cloudflare (безопасность)
-- Google Analytics (если включено)
 
 ## Как управлять Cookies
 
@@ -494,50 +532,91 @@ Cookies - это небольшие файлы, хранящиеся на ваш
 1. Откройте Параметры
 2. Найдите раздел Cookies/Приватность
 3. Блокируйте или разрешайте cookies
-4. Очищайте cookies в любое время
 
 ### В Pay Family
 - Параметры → Приватность → Предпочтения Cookies
 - Переключайте аналитические cookies
-- Баннер cookies при первом посещении
-
-## Согласие на Cookies
-Ваше согласие хранится в: `payment_cookie_consent` cookie
-- Вы можете изменить согласие в Параметрах
-- Необходимые cookies всегда включены
-- Аналитические/Предпочтения могут быть отключены
-
-## Данные, передаваемые через Cookies
-- Зашифрованные токены сессии
-- Анонимизированная аналитика
-- Нет личной информации в cookies
-
-## Длительность
-- Необходимые: Сессия + 24 часа
-- Аналитика: 1 год
-- Предпочтения: 1 год
 
 ## Вопросы?
+Email: privacy@payfamily.com`,
+    pl: `# Polityka plików cookie
+
+## Czym są pliki cookie?
+Pliki cookie to małe pliki przechowywane na Twoim urządzeniu, które pomagają nam Cię zapamiętać i ulepszyć Twoje doświadczenie.
+
+## Rodzaje używanych plików cookie
+
+### Niezbędne pliki cookie
+- **Cel:** Trzymanie Cię zalogowanego, przetwarzanie płatności
+- **Czas trwania:** Sesja lub 24 godziny
+- **Można wyłączyć:** Nie (strona nie będzie działać)
+
+### Pliki cookie analityczne
+- **Cel:** Zrozumienie, jak korzystasz z Pay Family
+- **Czas trwania:** 1 rok
+- **Można wyłączyć:** Tak
+
+### Pliki cookie preferencji
+- **Cel:** Zapamiętanie Twojego języka, preferencji motywu, waluty
+- **Czas trwania:** 1 rok
+- **Można wyłączyć:** Tak
+
+## Jak zarządzać plikami cookie
+
+### W Twojej przeglądarce
+1. Otwórz Ustawienia
+2. Znajdź sekcję Pliki cookie/Prywatność
+3. Blokuj lub zezwól na pliki cookie
+
+### W Pay Family
+- Ustawienia → Prywatność → Preferencje plików cookie
+- Przełącz pliki cookie analityczne
+
+## Pytania?
 Email: privacy@payfamily.com`,
   },
 };
 
 export const LegalHub: React.FC = () => {
-  const [activeDoc, setActiveDoc] = useState<DocumentType>('terms');
+  const [activeDoc, setActiveDoc] = useState<'terms' | 'privacy' | 'security' | 'gdpr' | 'cookies'>('terms');
   const [language, setLanguage] = useState<Language>('en');
+  const [currency, setCurrency] = useState<Currency>('USD');
+
+  // Auto-detect language and currency on mount
+  useEffect(() => {
+    const detectedLang = getDeviceLanguage();
+    setLanguage(detectedLang);
+    setCurrency(getDeviceCurrency(detectedLang));
+  }, []);
+
+  const handleLanguageChange = (lang: Language) => {
+    setLanguage(lang);
+    setCurrency(getDeviceCurrency(lang));
+  };
 
   const currentDoc = documents.find((d) => d.id === activeDoc);
   const documentContent = content[activeDoc][language];
+
+  const languageLabel: Record<Language, string> = {
+    en: 'English (USD)',
+    ru: 'Русский (RUB)',
+    pl: 'Polski (PLN)',
+  };
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       {/* Header */}
       <div style={{ marginBottom: '30px' }}>
         <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '10px' }}>
-          {language === 'en' ? 'Legal & Compliance' : 'Юридические документы'}
+          {language === 'en' && 'Legal & Compliance'}
+          {language === 'ru' && 'Юридические документы'}
+          {language === 'pl' && 'Dokumenty prawne'}
         </h1>
-        <p style={{ color: '#666', fontSize: '14px' }}>
-          {language === 'en' ? 'Last updated: 2026-01-14' : 'Последнее обновление: 14 января 2026'}
+        <p style={{ color: '#666', fontSize: '14px', marginBottom: '10px' }}>
+          {language === 'en' && 'Last updated: 2026-01-14 | Currency: '}
+          {language === 'ru' && 'Последнее обновление: 14 января 2026 | Валюта: '}
+          {language === 'pl' && 'Ostatnia aktualizacja: 14 stycznia 2026 | Waluta: '}
+          <strong>{currency}</strong>
         </p>
       </div>
 
@@ -568,36 +647,25 @@ export const LegalHub: React.FC = () => {
 
         {/* Language toggle */}
         <div style={{ display: 'flex', gap: '6px', borderLeft: '1px solid #eee', paddingLeft: '12px' }}>
-          <button
-            onClick={() => setLanguage('en')}
-            style={{
-              padding: '8px 12px',
-              fontSize: '13px',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              background: language === 'en' ? '#0066cc' : '#fff',
-              color: language === 'en' ? '#fff' : '#333',
-              cursor: 'pointer',
-              fontWeight: language === 'en' ? '600' : '400',
-            }}
-          >
-            English
-          </button>
-          <button
-            onClick={() => setLanguage('ru')}
-            style={{
-              padding: '8px 12px',
-              fontSize: '13px',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              background: language === 'ru' ? '#0066cc' : '#fff',
-              color: language === 'ru' ? '#fff' : '#333',
-              cursor: 'pointer',
-              fontWeight: language === 'ru' ? '600' : '400',
-            }}
-          >
-            Русский
-          </button>
+          {(['en', 'ru', 'pl'] as Language[]).map((lang) => (
+            <button
+              key={lang}
+              onClick={() => handleLanguageChange(lang)}
+              style={{
+                padding: '8px 12px',
+                fontSize: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                background: language === lang ? '#0066cc' : '#fff',
+                color: language === lang ? '#fff' : '#333',
+                cursor: 'pointer',
+                fontWeight: language === lang ? '600' : '400',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {languageLabel[lang]}
+            </button>
+          ))}
         </div>
 
         {/* Print button */}
@@ -612,7 +680,9 @@ export const LegalHub: React.FC = () => {
             cursor: 'pointer',
           }}
         >
-          {language === 'en' ? 'Print' : 'Печать'}
+          {language === 'en' && 'Print'}
+          {language === 'ru' && 'Печать'}
+          {language === 'pl' && 'Drukuj'}
         </button>
       </div>
 
@@ -626,9 +696,10 @@ export const LegalHub: React.FC = () => {
           lineHeight: '1.6',
           fontSize: '15px',
           color: '#333',
+          whiteSpace: 'pre-wrap',
         }}
       >
-        <div style={{ whiteSpace: 'pre-wrap' }}>{documentContent}</div>
+        {documentContent}
       </div>
 
       {/* Footer contact info */}
@@ -643,28 +714,38 @@ export const LegalHub: React.FC = () => {
         }}
       >
         <p style={{ margin: '0 0 10px 0', fontWeight: 'bold' }}>
-          {language === 'en' ? 'Questions?' : 'Вопросы?'}
+          {language === 'en' && 'Questions?'}
+          {language === 'ru' && 'Вопросы?'}
+          {language === 'pl' && 'Pytania?'}
         </p>
         <p style={{ margin: '5px 0' }}>
-          {language === 'en' ? 'Privacy: ' : 'Конфиденциальность: '}
+          {language === 'en' && 'Privacy: '}
+          {language === 'ru' && 'Конфиденциальность: '}
+          {language === 'pl' && 'Prywatność: '}
           <a href="mailto:privacy@payfamily.com" style={{ color: '#0066cc', textDecoration: 'none' }}>
             privacy@payfamily.com
           </a>
         </p>
         <p style={{ margin: '5px 0' }}>
-          {language === 'en' ? 'Legal: ' : 'Юридический: '}
+          {language === 'en' && 'Legal: '}
+          {language === 'ru' && 'Юридическая: '}
+          {language === 'pl' && 'Prawne: '}
           <a href="mailto:legal@payfamily.com" style={{ color: '#0066cc', textDecoration: 'none' }}>
             legal@payfamily.com
           </a>
         </p>
         <p style={{ margin: '5px 0' }}>
-          {language === 'en' ? 'Security: ' : 'Безопасность: '}
+          {language === 'en' && 'Security: '}
+          {language === 'ru' && 'Безопасность: '}
+          {language === 'pl' && 'Bezpieczeństwo: '}
           <a href="mailto:security@payfamily.com" style={{ color: '#0066cc', textDecoration: 'none' }}>
             security@payfamily.com
           </a>
         </p>
         <p style={{ margin: '5px 0' }}>
-          {language === 'en' ? 'Data Subject Requests: ' : 'Запросы данных: '}
+          {language === 'en' && 'Data Subject Requests: '}
+          {language === 'ru' && 'Запросы данных: '}
+          {language === 'pl' && 'Wnioski o dane: '}
           <a href="mailto:dsr@payfamily.com" style={{ color: '#0066cc', textDecoration: 'none' }}>
             dsr@payfamily.com
           </a>
