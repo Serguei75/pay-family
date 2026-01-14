@@ -12,7 +12,7 @@ import { Spinner } from './Spinner.tsx';
 import { v4 as uuidv4 } from 'uuid';
 
 function App() {
-  const { user, login, logout, loading: authLoading } = useAuth();
+  const { user, login, loginAsGuest, logout, loading: authLoading, getEncryptionPassword } = useAuth();
   const { documents, addDocument, deleteDocument, updateDocument, loading: docsLoading } = useDocuments();
 
   const [activeView, setActiveView] = useState<'receipts' | 'invoices' | 'pricing'>('receipts');
@@ -28,30 +28,22 @@ function App() {
     member: '',
   });
 
-  // Обработка Google Login
-  const handleGoogleLogin = async () => {
+  // Обработка Puter Login
+  const handlePuterLogin = async () => {
     try {
-      const mockUser = {
-        id: uuidv4(),
-        name: 'Demo User',
-        email: 'demo@example.com',
-        role: 'Husband' as const,
-      };
-      await login(mockUser);
+      await login();
     } catch (error) {
-      console.error('Google login failed:', error);
+      console.error('Puter login failed:', error);
     }
   };
 
   // Обработка Guest Login
   const handleGuestLogin = async () => {
-    const guestUser = {
-      id: uuidv4(),
-      name: 'Guest',
-      email: 'guest@payfamily.local',
-      role: 'Husband' as const,
-    };
-    await login(guestUser);
+    try {
+      await loginAsGuest();
+    } catch (error) {
+      console.error('Guest login failed:', error);
+    }
   };
 
   // Обработка добавления документа
@@ -113,11 +105,12 @@ function App() {
   });
 
   // Показывать экран входа если пользователь не авторизирован
-  if (!user && authLoading === false) {
+  if (!user && !authLoading) {
     return (
       <LoginScreen
-        onGoogleLogin={handleGoogleLogin}
+        onPuterLogin={handlePuterLogin}
         onGuestLogin={handleGuestLogin}
+        isLoading={authLoading}
       />
     );
   }
@@ -207,7 +200,7 @@ function App() {
       </main>
 
       <footer style={styles.footer}>
-        <p>Pay Family © 2024 | Family Expense Tracker MVP</p>
+        <p>Pay Family © 2024 | Zero-Knowledge Client-Side Architecture</p>
       </footer>
     </div>
   );
