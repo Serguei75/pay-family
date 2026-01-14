@@ -2,35 +2,63 @@
   "name": "pay-family-mvp",
   "version": "1.0.0",
   "type": "module",
-  "description": "Family Expense Tracker with React, TypeScript, and modern integrations",
+  "description": "Family Expense Tracker with Zero-Knowledge Architecture and Client-Side Encryption",
+  "main": "src/main.tsx",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext ts,tsx",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src",
+    "mobile:install": "npm install -g @ionic/cli && ionic capacitor install",
+    "mobile:add:android": "ionic capacitor add android",
+    "mobile:add:ios": "ionic capacitor add ios",
+    "mobile:build": "npm run build && ionic capacitor copy",
+    "mobile:dev:android": "ionic capacitor open android",
+    "mobile:dev:ios": "ionic capacitor open ios",
+    "mobile:sync": "npm run build && ionic capacitor sync"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "uuid": "^9.0.1",
     "jspdf": "^2.5.1",
     "xlsx": "^0.18.5",
-    "tesseract.js": "^5.0.1",
     "html2canvas": "^1.4.1",
+    "tesseract.js": "^4.1.1",
     "zustand": "^4.4.1",
-    "uuid": "^9.0.0",
-    "chart.js": "^4.4.0",
-    "react-chartjs-2": "^5.2.0"
+    "puter": "^1.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
+    "@vitejs/plugin-react": "^4.2.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.7",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "@typescript-eslint/parser": "^6.13.0",
-    "@vitejs/plugin-react": "^4.2.0",
     "eslint": "^8.54.0",
-    "typescript": "^5.3.0",
-    "vite": "^5.0.0"
-  }
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/ios": "^6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Serguei75/pay-family"
+  },
+  "keywords": [
+    "family-expenses",
+    "expense-tracker",
+    "finance",
+    "zero-knowledge",
+    "encryption",
+    "puter",
+    "capacitor",
+    "react",
+    "typescript"
+  ],
+  "author": "Serguei75",
+  "license": "MIT"
 }
