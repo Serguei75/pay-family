@@ -1,0 +1,61 @@
+{
+  "id": "email-parser",
+  "name": "Email Parser",
+  "version": "1.0.0",
+  "description": "AI-powered email parsing for extracting financial data from receipts and invoices",
+  "author": "Pay Family Team",
+  "license": "MIT",
+  
+  "core": {
+    "minVersion": "1.0.0"
+  },
+  
+  "dependencies": {
+    "modules": {
+      "expense-tracker": "^1.0.0"
+    },
+    "npm": {
+      "@google/generative-ai": "^0.1.0",
+      "imap": "^0.8.19",
+      "mailparser": "^3.6.5"
+    }
+  },
+  
+  "provides": {
+    "routes": [
+      "/modules/email-parser",
+      "/api/v1/parse-email",
+      "/api/v1/email-history"
+    ],
+    "components": [
+      "EmailParserWidget",
+      "EmailHistoryTable",
+      "EmailSettings"
+    ],
+    "services": [
+      "EmailParsingService",
+      "AIAnalysisService"
+    ]
+  },
+  
+  "requires": {
+    "permissions": [
+      "email.read",
+      "expenses.write"
+    ],
+    "apis": ["gemini"],
+    "database": true
+  },
+  
+  "hooks": {
+    "onInstall": "./scripts/install.ts",
+    "onEnable": "./scripts/enable.ts",
+    "onDisable": "./scripts/disable.ts",
+    "onUninstall": "./scripts/uninstall.ts"
+  },
+  
+  "settings": {
+    "configurable": true,
+    "ui": "./components/Settings.tsx"
+  }
+}

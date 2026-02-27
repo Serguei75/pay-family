@@ -1,0 +1,44 @@
+{
+  "id": "expense-tracker",
+  "name": "Expense Tracker",
+  "version": "1.0.0",
+  "description": "Track and manage income and expenses",
+  "author": "Pay Family Team",
+  "license": "MIT",
+  
+  "core": {
+    "minVersion": "1.0.0"
+  },
+  
+  "provides": {
+    "routes": [
+      "/modules/expense-tracker",
+      "/api/v1/expenses",
+      "/api/v1/categories"
+    ],
+    "components": [
+      "ExpenseList",
+      "ExpenseForm",
+      "CategoryManager"
+    ],
+    "services": [
+      "ExpenseService",
+      "CategoryService"
+    ]
+  },
+  
+  "requires": {
+    "permissions": [
+      "expenses.read",
+      "expenses.write"
+    ],
+    "database": true
+  },
+  
+  "hooks": {
+    "onInstall": "./scripts/install.ts",
+    "onEnable": "./scripts/enable.ts",
+    "onDisable": "./scripts/disable.ts",
+    "onUninstall": "./scripts/uninstall.ts"
+  }
+}
